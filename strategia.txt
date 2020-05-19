@@ -1,0 +1,11 @@
+The simulation is defined by days
+
+[day, patientID , assignedTo, ventilatorBed , estimatedLOS, discharge , death ]
+
+day- {1,2,...}
+patientID-ID OF Patient
+assignedTo- Identifier of reception bed, or Null if patient is not assigned
+ventilatorBed- 1 if it is ventilator bed, 0 otherwise. Null if patient is not assigned
+estimatedLOS - integer representing the length of stay estimated for patient ID
+discharge - 0 if it remains at the bed, 1 if it is discharged of the bed. Note that patient can be death, sane, or migrate to other bed
+death    - 0 if not is death, 1 if it is death
