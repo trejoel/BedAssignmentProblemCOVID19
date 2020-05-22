@@ -86,7 +86,7 @@ public class Testbed extends Thread {
 		PatientA xPatient;
 		try(  PrintWriter out = new PrintWriter( file)  ){
 			//out.println("[patientID, taskDemand, Start Time, Waiting_Time, Execution_Time, Accepted, WorkStationID]");
-			out.println("[patientID, lengthOfStay, estimatedLenghOfStay, arrivalDay, dischargeDay, Accepted, BedID]");
+			out.println("patientID, lengthOfStay, estimatedLenghOfStay, arrivalDay, dischargeDay, Accepted, BedID");
 		      for (int counter = 0; counter < setPatients.size(); counter++) { 		      
 		        xPatient=(PatientA)setPatients.get(counter); 
 		    	    System.out.println(xPatient.getId()); 	
