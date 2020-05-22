@@ -77,26 +77,47 @@ public class HospitalA {
 		//String text="Received Job:"+job.getId()+" at time:"+timeArrival+" estimation time="+job.get_execution_time();
 		String text="";
 		
-		boolean schedulable=true;
-		if (job.get_execution_time()>2000){
-			//schedulable=false;
-			//System.out.println("The job "+job.getId()+" is not classified as ligh customer due to its ex time="+job.get_execution_time());		
-		}
-		
 	    switch (policy){  //1 Round robin; 2 Best fit; 3 First come first serve; 4 Round Robin Priority
 	       case 1:text=text+roundRobin(job, this.curSMA,timeArrival,  schedulable);
 	       		  break;
-	       case 2:text=text+bestFit(job, this.curSMA,timeArrival, schedulable);
+	    /*   case 2:text=text+bestFit(job, this.curSMA,timeArrival, schedulable);
 	       		  break;
 	       case 3: text=text+firstComefirstServe(job, this.curSMA,timeArrival, schedulable);
 	       		  break;
            case 4: text=text+priority(job, this.curSMA,timeArrival, schedulable);
-	       		  break;	       
+	       		  break;*/	       
                    
 	    }		
 	    curSMA++;
 	    return text;
 	}
+	
+	public String roundRobin(PatientA xPatient, int i,float xTimeArrival, boolean schedulable){
+        String text="";
+        BedA xNode;
+        float xAvailable=0;
+        int index=i%20;
+        xNode=listSMA.get(index);
+        xAvailable=xNode.isAvailable(xTimeArrival);	    
+        text=text+job.getId()+","+job.get_demand(0)+","+job.get_starting_time()+","+xAvailable;
+        xAvailable=xAvailable+xNode.computeExecutionTime(job); //This is the estimated time to be return
+        //System.out.println("Waiting Time:"+xAvailable);
+        text=text+","+xAvailable;
+        if (xAvailable<job.getDeadline() && schedulable)
+        {
+        	xNode.receiveVMA(job);
+            text=text+",1,"+xNode.getID();
+            //text="GREAT Waiting time:"+xAvailable;
+            //System.out.println("Se asigna a la SMA:"+xNode.getID()+" hold time: "+xAvailable);
+        }
+        else
+        {                                		
+            //text="SORRY Waiting time:"+xAvailable;
+            text=text+",0,"+xNode.getID();
+            //System.out.println("No se pudo asignar el Job:"+job.getId()+" hold time:"+xAvailable);
+        }	                    
+        return text;
+}
     
     
 

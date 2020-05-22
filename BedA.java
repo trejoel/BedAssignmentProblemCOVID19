@@ -1,3 +1,4 @@
+
 package architecture;
 
 import java.util.ArrayList;
@@ -83,7 +84,7 @@ public class BedA {
     }
     
     public void receivePatient(PatientA xPatient) {
-    	int xOccupiedDays=xPatient.getLenghtOfStay();
+    	int xOccupiedDays=xPatient.getLOS();
     	if (xOccupiedDays>0) {
     		setAvailable(false);
     	}
