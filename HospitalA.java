@@ -21,13 +21,18 @@ import architecture.Utilities;
 
 public class HospitalA {
 	
-	private ArrayList<PatientA> setPatients;
-	private ArrayList<BedA> setBeds; //There exists 1000 available beds
-	
+	//private ArrayList<PatientA> setPatients;
+	private ArrayList<BedA> setBedsV; //There exists 300 available beds with ventilator
+	private ArrayList<BedA> setBedsN; //There exists 700 available normal beds
+	private int curBedN;
+	private int curBedV;
 	
 	public HospitalA() {
-		this.setPatients=new ArrayList<PatientA>();
-		this.setBeds=new ArrayList<BedA>();
+		curBedN=1;
+		curBedV=1;
+		//this.setPatients=new ArrayList<PatientA>();
+		this.setBedsV=new ArrayList<BedA>();
+		this.setBedsN=new ArrayList<BedA>();
 	}
 	
 	
@@ -39,64 +44,84 @@ public class HospitalA {
     	  for (int iVentilator=0;iVentilator<300;iVentilator++) {
     		  auxBed=new BedA(iVentilator);
     		  auxBed.setType(true);
-    		  setBeds.add(auxBed);
+    		  setBedsV.add(auxBed);
     	  }
     	  for (int iNormal=300;iNormal<1000;iNormal++) {
     		  auxBed=new BedA(iNormal);
-    		  setBeds.add(auxBed);
+    		  setBedsN.add(auxBed);
     	  }
     }
     
     
-    // Every day we generate a set of patients with random synthoms and features
-    // We simulate 100 days according to mathematical models. Starting from 30 days before
-    //peak of the curve to 30 days after the peak of the curve
-    public void generatePatients() {
-       	//number of days
-    	   Utilities Ut=new Utilities();
-    	   PatientA auxP;
-    	   int xAge;
-    	   boolean xType=false, xDiabetes=false, xHiper=false, xObesity=false, xEpoc=false, xInmune=false;
-    	   int idPatient=1;
-    	   for (int i=1;i<100;i++) {
-    		   int x=Ut.computeNumberPatients(i);
-    		   for (int j=1;j<x;j++) {
-    			   xAge=Ut.generateRandomAge();
-    			   auxP=new PatientA(idPatient,xAge,i);
-    			   auxP.setDiabetes(xDiabetes);
-    			   auxP.setEpoc(xEpoc);
-    			   auxP.setObesity(xObesity);
-    			   auxP.setHyper(xHiper);
-    			   auxP.setInmune(xInmune);
-    			   setPatients.add(auxP);
-    		   }
-    	   }
-    }
+    /***
+     * This function is called by Testbed and review for all the occupied beds
+     * that discharge its patient. In such a case the bed sets avaible = true
+     * */
+     public void renewBeds() {
+    	 
+     }
    
 	public String assignBed(PatientA xPatient, int policy){
 		//String text="Received Job:"+job.getId()+" at time:"+timeArrival+" estimation time="+job.get_execution_time();
 		String text="";
 		
-		boolean schedulable=true;
-		if (job.get_execution_time()>2000){
-			//schedulable=false;
-			//System.out.println("The job "+job.getId()+" is not classified as ligh customer due to its ex time="+job.get_execution_time());		
-		}
 		
 	    switch (policy){  //1 Round robin; 2 Best fit; 3 First come first serve; 4 Round Robin Priority
-	       case 1:text=text+roundRobin(job, this.curSMA,timeArrival,  schedulable);
+	       case 1:text=text+roundRobin(xPatient);//stands for normal bed or ventilator bed
+	       		  if (xPatient.getType()) { //Ventilator
+	       			  curBedV++;
+	       		  }
+	       		  else {
+	       			  curBedN++;
+	       		  }
 	       		  break;
-	       case 2:text=text+bestFit(job, this.curSMA,timeArrival, schedulable);
+	    /*   case 2:text=text+bestFit(job, this.curSMA,timeArrival, schedulable);
 	       		  break;
 	       case 3: text=text+firstComefirstServe(job, this.curSMA,timeArrival, schedulable);
 	       		  break;
            case 4: text=text+priority(job, this.curSMA,timeArrival, schedulable);
-	       		  break;	       
+	       		  break;	*/       
                    
 	    }		
-	    curSMA++;
 	    return text;
 	}
+	
+	//curBedN current normal bed, curBedV current ventilator bed
+	
+	/**
+	 * We assign a patient to the first available bed, as soon as patient request for 
+	 * a bed. Without loss of generality a patient i migrating from a normal (ventilator) bed 
+	 * to a ventilator (normal) bed is a new patient j.  
+	 * 
+	 * 
+	 * **/
+	
+	public String roundRobin(PatientA xPatient){
+        String text="";
+        BedA xNode;
+        float xAvailable=0;
+        int index=i%20;
+        xNode=listSMA.get(index);
+        xAvailable=xNode.isAvailable(xTimeArrival);	    
+        text=text+job.getId()+","+job.get_demand(0)+","+job.get_starting_time()+","+xAvailable;
+        xAvailable=xAvailable+xNode.computeExecutionTime(job); //This is the estimated time to be return
+        //System.out.println("Waiting Time:"+xAvailable);
+        text=text+","+xAvailable;
+        if (xAvailable<job.getDeadline() && schedulable)
+        {
+        	xNode.receiveVMA(job);
+            text=text+",1,"+xNode.getID();
+            //text="GREAT Waiting time:"+xAvailable;
+            //System.out.println("Se asigna a la SMA:"+xNode.getID()+" hold time: "+xAvailable);
+        }
+        else
+        {                                		
+            //text="SORRY Waiting time:"+xAvailable;
+            text=text+",0,"+xNode.getID();
+            //System.out.println("No se pudo asignar el Job:"+job.getId()+" hold time:"+xAvailable);
+        }	                    
+        return text;
+}
     
     
 

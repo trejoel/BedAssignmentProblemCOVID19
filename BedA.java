@@ -83,12 +83,19 @@ public class BedA {
     }
     
     public void receivePatient(PatientA xPatient) {
-    	int xOccupiedDays=xPatient.getLenghtOfStay();
+    	int xOccupiedDays=xPatient.getLOS();
     	if (xOccupiedDays>0) {
     		setAvailable(false);
     	}
     	this.setDays2Realease(xOccupiedDays);
     	xPatient.assigned(true);
+    }
+    
+    public void decreaseDays2Release() {
+    	   days2Release--;
+    	   if (days2Release==0) {
+    		   this.setAvailable(true);
+    	   }
     }
     
     public void removePatient(PatientA xPatient) {

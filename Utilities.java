@@ -46,6 +46,22 @@ public int generateRandomAge() {
 	//consider the following table to generate a random age:
 	//https://www.cdc.gov/mmwr/volumes/69/wr/mm6915e3.htm 
 	return xAge;
+	
+	
+	/**
+	 * https://www.cdc.gov/mmwr/volumes/69/wr/mm6915e3.htm 
+	 * i=random(1,100);
+	 * switch case(i):
+	 *    i<3   = edad=random (0,2);
+	 *    3<i<5  = edad=random (3,17);
+	 *    6<i<10 = edad = random(18,49);
+	 *    
+	 *    ..
+	 *    ..
+	 *    i>60  = edad = random (85,100);
+	 *    
+	 *    
+	 * **/
 
 }
 

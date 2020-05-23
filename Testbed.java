@@ -44,6 +44,8 @@ public class Testbed extends Thread {
 		//100 days of simulation
 			int idPatient=1;
 		for (int i=1;i<101;i++){  
+			//Each time a cycle, we traverse the set of available 
+			//beds and decrease days2release
 			idPatient=generatePatients(i,idPatient);
 	  }	
 	}catch (Exception ex){
@@ -86,14 +88,14 @@ public class Testbed extends Thread {
 		PatientA xPatient;
 		try(  PrintWriter out = new PrintWriter( file)  ){
 			//out.println("[patientID, taskDemand, Start Time, Waiting_Time, Execution_Time, Accepted, WorkStationID]");
-			out.println("[patientID, lengthOfStay, estimatedLenghOfStay, arrivalDay, dischargeDay, Accepted, BedID]");
+			out.println("patientID, Ventilator, estimatedLenghOfStay, arrivalDay, dischargeDay, Accepted, BedID, Dead");
 		      for (int counter = 0; counter < setPatients.size(); counter++) { 		      
 		        xPatient=(PatientA)setPatients.get(counter); 
 		    	    System.out.println(xPatient.getId()); 	
 		    		text=myHospital.assignBed(xPatient,1);//1 is for roundrobin
-		    		out.println(text);  	
+		    		out.println(text); 
 		      }  
-			for (int i=0;i<245;i++){
+		for (int i=0;i<245;i++){
 	    		  //virtual_machine[i]=new JobA(i, xCPU_Avaible, xMEM_Avaible, (float)xstart_time, (float)xexecution_time,(float)xdeadline);
 	    		  //Here we need to subscribe the VMA to the FA. Review if the listVMA is better to be a VMA object		      		      	
 	    		text=front_agent.receiveJob(virtual_machine[i], (long)virtual_machine[i].get_starting_time(),1);
