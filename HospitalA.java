@@ -28,8 +28,8 @@ public class HospitalA {
 	private int curBedV;
 	
 	public HospitalA() {
-		curBedN=1;
-		curBedV=1;
+		curBedN=0; //First assigned roundRound with ventilator
+		curBedV=300; //First assigned roundRobin with no ventilator
 		//this.setPatients=new ArrayList<PatientA>();
 		this.setBedsV=new ArrayList<BedA>();
 		this.setBedsN=new ArrayList<BedA>();
@@ -40,6 +40,8 @@ public class HospitalA {
     public void generateBeds(int xVentilatorBed, int xNormalBed) {
     	  //xVentilatorBed number of beds
     	  //xNormalBed number of bedss
+      //ventilatorbeds from 0 to 299
+    	 //Normal beds from 300 to 999
     	  BedA auxBed;
     	  for (int iVentilator=0;iVentilator<300;iVentilator++) {
     		  auxBed=new BedA(iVentilator);
@@ -52,28 +54,99 @@ public class HospitalA {
     	  }
     }
     
+    public void updateBeds(boolean withVentilator, int xValue) {
+    	   if (withVentilator) {
+    		   this.curBedV=xValue;
+    	   }
+    	   else {
+    		   this.curBedN=xValue;
+    	   }
+    }
+    
     
     /***
      * This function is called by Testbed and review for all the occupied beds
      * that discharge its patient. In such a case the bed sets avaible = true
      * */
-     public void renewBeds() {
-    	 
+     public void makeAvailableBeds() {
+    	     BedA auxBedV;
+    	     BedA auxBedN;
+	    	 for (int counter = 0; counter < setBedsV.size(); counter++) { 
+	    		 auxBedV=(BedA)setBedsV.get(counter);
+	    		 if (!auxBedV.isAvailable()) {
+	    			 System.out.println("Days2Release:"+setBedsV.get(counter).getdays2Release());
+	    			 setBedsV.get(counter).decreaseDays2Release();
+	    			 //Vamos a ver si lo decrementa
+	    			 System.out.println("Days2Release:"+setBedsV.get(counter).getdays2Release());
+	    		 }
+	    	 }
+	    	 for (int counter = 0; counter < setBedsN.size(); counter++) { 
+	    		 auxBedN=(BedA)setBedsN.get(counter);
+	    		 if (!auxBedN.isAvailable()) {
+	    			 System.out.println("Days2Release:"+setBedsN.get(counter).getdays2Release());
+	    			 setBedsN.get(counter).decreaseDays2Release();
+	    			 //Vamos a ver si lo decrementa
+	    			 System.out.println("Days2Release:"+setBedsN.get(counter).getdays2Release());
+	    		 }
+	    	 }
      }
+     
+    public int getNextAvailableBed(boolean isWithVentilator, int currentBed) {
+      //ventilatorbeds from 0 to 299
+  	  //Normal beds from 300 to 999
+      int counter=0;
+      int index=currentBed;
+      if (isWithVentilator) {
+    		 while (counter<300) {
+    			 if (setBedsV.get(index).isAvailable()) {
+    				 return index;
+    			 }
+    			 else {
+    				 if (index<299) {
+    					 index++;	 
+    				 }
+    				 else { //this is the last ventilator bed 299
+    					 index=0;
+    				 }
+    				 counter++;	 
+    			 }
+    		 }
+    		 if (counter==300) {
+    			 return -1; //There is not available bed
+    		 }
+    	    }
+    	  else {
+     		 while (counter<700) {
+    			 if (setBedsV.get(index).isAvailable()) {
+    				 return index;
+    			 }
+    			 else {
+    				 if (index<999) {
+    					 index++;	 
+    				 }
+    				 else { //this is the last ventilator bed 299
+    					 index=300;
+    				 }
+    				 counter++;	 
+    			 }
+    		    }
+    		 if (counter==700) {
+    			 return -1; //There is not available bed
+    		 }
+    	  }
+    	  return index;
+    }
    
 	public String assignBed(PatientA xPatient, int policy){
 		//String text="Received Job:"+job.getId()+" at time:"+timeArrival+" estimation time="+job.get_execution_time();
+		//IntegerString xAux=null;
 		String text="";
+		int x=0;
+		//xAux=new IntegerString(x,text);
 		
 		
 	    switch (policy){  //1 Round robin; 2 Best fit; 3 First come first serve; 4 Round Robin Priority
-	       case 1:text=text+roundRobin(xPatient);//stands for normal bed or ventilator bed
-	       		  if (xPatient.getType()) { //Ventilator
-	       			  curBedV++;
-	       		  }
-	       		  else {
-	       			  curBedN++;
-	       		  }
+	       case 1: text=roundRobin(xPatient);
 	       		  break;
 	    /*   case 2:text=text+bestFit(job, this.curSMA,timeArrival, schedulable);
 	       		  break;
@@ -96,9 +169,24 @@ public class HospitalA {
 	 * 
 	 * **/
 	
+	//initial curBed 0 for ventilator bed, 300 for normal bed
 	public String roundRobin(PatientA xPatient){
         String text="";
-        BedA xNode;
+        int index=0;
+      //The problem is now how to compute the last assigned index
+        if (xPatient.getType()) {//Require ventilator
+        	   index=getNextAvailableBed(true, curBedV);
+        	   if (index==-1) {
+        		   System.out.println("Patient:"+xPatient.getId()+" Not assigned");
+        	   }
+        }
+        else {
+        	   index=getNextAvailableBed(true,curBedN);
+        	   if (index==-1) {
+        		   System.out.println("Patient:"+xPatient.getId()+" Not assigned");
+        	   }
+        }
+        BedA myBed=;
         float xAvailable=0;
         int index=i%20;
         xNode=listSMA.get(index);

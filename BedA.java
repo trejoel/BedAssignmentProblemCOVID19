@@ -43,7 +43,7 @@ public class BedA {
     	return this.type;
     }
     
-    public boolean getAvailable() {
+    public boolean isAvailable() {
     	return this.available;
     }
     

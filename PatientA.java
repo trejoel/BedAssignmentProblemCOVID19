@@ -19,7 +19,7 @@ public class PatientA implements Serializable {
 	private int age;
 	private int dayOfArrival;
 	private int LOS;
-	private boolean type; // 0 critical, 1 urgent (non-critical)
+	private boolean type; // 0 non-ventilator, 1 ventilator (non-critical)
 	private boolean diabetes;  // 1 for positive
 	private boolean hyper; // 1 for positive
 	private boolean epoc; // 1 for positive

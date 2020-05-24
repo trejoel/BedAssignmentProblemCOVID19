@@ -45,22 +45,22 @@ public int generateRandomAge() {
 	//Please complete to generate a consistent value for age
 	//consider the following table to generate a random age:
 	//https://www.cdc.gov/mmwr/volumes/69/wr/mm6915e3.htm 
-	return xAge;
-	
-	
+	return xAge;	
 	/**
 	 * https://www.cdc.gov/mmwr/volumes/69/wr/mm6915e3.htm 
 	 * i=random(1,100);
 	 * switch case(i):
-	 *    i<3   = edad=random (0,2);
-	 *    3<i<5  = edad=random (3,17);
-	 *    6<i<10 = edad = random(18,49);
-	 *    
-	 *    ..
-	 *    ..
-	 *    i>60  = edad = random (85,100);
-	 *    
-	 *    
+	 *    i<20   = edad=random (0,4);
+	 *    20<i<39  = edad=random (5,34);
+	 *    40<i<59 = edad = random(35,74);
+	 *    60<i<80  = edad = random (75,94);
+	 *    81<i<100 = edad= random (95,100)
+	 * **/
+	
+	/**
+	 * suponiendo que salio random=39 quiere decir qeu es la clase de 40 a 59
+	 * generateEdad(40,59)
+	 * 
 	 * **/
 
 }
