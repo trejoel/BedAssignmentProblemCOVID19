@@ -45,7 +45,23 @@ public int generateRandomAge() {
 	//Please complete to generate a consistent value for age
 	//consider the following table to generate a random age:
 	//https://www.cdc.gov/mmwr/volumes/69/wr/mm6915e3.htm 
-	return xAge;
+	return xAge;	
+	/**
+	 * https://www.cdc.gov/mmwr/volumes/69/wr/mm6915e3.htm 
+	 * i=random(1,100);
+	 * switch case(i):
+	 *    i<20   = edad=random (0,4);
+	 *    20<i<39  = edad=random (5,34);
+	 *    40<i<59 = edad = random(35,74);
+	 *    60<i<80  = edad = random (75,94);
+	 *    81<i<100 = edad= random (95,100)
+	 * **/
+	
+	/**
+	 * suponiendo que salio random=39 quiere decir qeu es la clase de 40 a 59
+	 * generateEdad(40,59)
+	 * 
+	 * **/
 
 }
 
@@ -133,6 +149,44 @@ public int generateRandomAge() {
 	   return LOS;
 	    
    }
+   
+   public int randomDay2Release() {
+	   Random random = new Random();
+	   int day2release=0;
+	   boolean boolValue=random.nextBoolean();
+	   day2release=this.estimateLenghtOfStay(this.generateRandomAge());
+	   int randomInteger = random.nextInt(day2release);
+	   if (boolValue) {
+		   day2release=day2release+randomInteger;
+	   }
+	   else {
+		   day2release=day2release-randomInteger;
+	   }
+	   return day2release;
+   }
+  
+   
+   public boolean isDead(int age, boolean isDiabetes, boolean isHyper, boolean isObese, boolean isEpoc, int daysHospitalization) {
+	   boolean isD=false;
+	   //Assume 5% dead during the first 2 days
+	   // Assume 0 to 15% dead during first 10 days
+	   // Assume 0 to 23% dead after the 11 day
+	   // incorporate later the comorbilities to these percentages
+	   boolean randomValue=false;
+	   Random random = new Random();
+	   int randomInt= random.nextInt(100);
+	   if (daysHospitalization<3 && randomInt<4) {
+		   randomValue=true;
+	   }
+	   if (daysHospitalization<11 && randomInt<16) {
+		   randomValue=true;
+	   }
+	   if (daysHospitalization>10 && randomInt<24) {
+		   randomValue=true;
+	   }
+	   return randomValue;
+   }
+   
    
    
    /**
