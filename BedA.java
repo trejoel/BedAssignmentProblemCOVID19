@@ -23,6 +23,7 @@ public class BedA {
 	private boolean available;
 	private int occupiedDays;
 	private int days2Release;
+	private PatientA xPatient;
  
     public BedA(int xid) {
     	this.id=id;
@@ -30,6 +31,7 @@ public class BedA {
     	this.available=false;
     	this.occupiedDays=0;
     	this.days2Release=0;
+    	xPatient=null;
     }
     
     
@@ -43,7 +45,7 @@ public class BedA {
     	return this.type;
     }
     
-    public boolean getAvailable() {
+    public boolean isAvailable() {
     	return this.available;
     }
     
@@ -53,6 +55,10 @@ public class BedA {
     
     public int getdays2Release() {
     	return this.days2Release;
+    }
+    
+    public PatientA getPatient() {
+    	return this.xPatient;
     }
     
     //setters
@@ -83,12 +89,20 @@ public class BedA {
     }
     
     public void receivePatient(PatientA xPatient) {
-    	int xOccupiedDays=xPatient.getLenghtOfStay();
+    	int xOccupiedDays=xPatient.getLOS();
     	if (xOccupiedDays>0) {
     		setAvailable(false);
+    		this.xPatient=xPatient;
     	}
     	this.setDays2Realease(xOccupiedDays);
     	xPatient.assigned(true);
+    }
+    
+    public void decreaseDays2Release() {
+    	   days2Release--;
+    	   if (days2Release==0) {
+    		   this.setAvailable(true);
+    	   }
     }
     
     public void removePatient(PatientA xPatient) {

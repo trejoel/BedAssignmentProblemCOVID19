@@ -11,7 +11,8 @@ public class Testbed extends Thread {
 	
 	private int startTime;
 	private int simulationRun;
-	private ArrayList<PatientA> setPatients;
+	private ArrayList<PatientA> setPatients; 
+	private ArrayList<String> outputString; // This ArrayList of Strings can be changed in case a patient dies
 	private Utilities Ut;
 	private HospitalA myHospital;
 	
@@ -44,13 +45,38 @@ public class Testbed extends Thread {
 		//100 days of simulation
 			int idPatient=1;
 		for (int i=1;i<101;i++){  
+			//Each time a cycle, we traverse the set of available 
+			//beds and decrease days2release
 			idPatient=generatePatients(i,idPatient);
+			updatePatientParameters(i);
+			// Update the days2release of patients day 2 day. Also update the daysOfHospitalization
 	  }	
 	}catch (Exception ex){
         System.out.println(ex);
      }
 		
   }
+    
+    /***
+     * This function is called by Testbed and review for all the patients that
+     * have assigned a bed. 
+     * */   
+ 
+ public void updatePatientParameters(int evaluationDay) {
+	 for (int counter=0; counter<setPatients.size(); counter++) {
+		 setPatients.get(counter).decreaseDay2Release();
+		 setPatients.get(counter).increaseDaysHospitalization();
+		 setPatients.get(counter).chance2Dead();
+		 if (setPatients.get(counter).isDead()) {
+			 setPatients.get(counter).setDead(true);
+		 }
+		 else {
+			 setPatients.get(counter).increaseDaysHospitalization();
+			 setPatients.get(counter).decreaseDay2Release();
+		 }
+	 }	 
+ }
+ 
     
     
  
@@ -74,36 +100,31 @@ public class Testbed extends Thread {
     		   auxP.setHyper(Ut.generateRandomHyper());
     		   auxP.setInmune(Ut.generateRandominmunesup());
     		   auxP.setLOS(Ut.estimateLenghtOfStay(xAge));
+    		   auxP.setDay2Release(Ut.randomDay2Release());
     		   setPatients.add(auxP);
     		   idPatient++;
        }
     	   return idPatient;
     }
     
-    public void roundRobin(){
+    public ArrayList<String> roundRobin(){
     	String text="";
 		File file=new File("roundRobin.txt");
 		PatientA xPatient;
+		ArrayList<String> arrayOfStrings=new ArrayList<String>();
+		int startingBed=0;
 		try(  PrintWriter out = new PrintWriter( file)  ){
 			//out.println("[patientID, taskDemand, Start Time, Waiting_Time, Execution_Time, Accepted, WorkStationID]");
-			out.println("[patientID, lengthOfStay, estimatedLenghOfStay, arrivalDay, dischargeDay, Accepted, BedID]");
+			out.println("patientID, Ventilator, estimatedLenghOfStay, arrivalDay, dischargeDay, Accepted, BedID, Dead");
 		      for (int counter = 0; counter < setPatients.size(); counter++) { 		      
 		        xPatient=(PatientA)setPatients.get(counter); 
-		    	    System.out.println(xPatient.getId()); 	
-		    		text=myHospital.assignBed(xPatient,1);//1 is for roundrobin
-		    		out.println(text);  	
+		        arrayOfStrings.add(myHospital.assignBed(xPatient, 1));
 		      }  
-			for (int i=0;i<245;i++){
-	    		  //virtual_machine[i]=new JobA(i, xCPU_Avaible, xMEM_Avaible, (float)xstart_time, (float)xexecution_time,(float)xdeadline);
-	    		  //Here we need to subscribe the VMA to the FA. Review if the listVMA is better to be a VMA object		      		      	
-	    		text=front_agent.receiveJob(virtual_machine[i], (long)virtual_machine[i].get_starting_time(),1);
-	    		out.println(text);  
-	    		//virtual_machine[i].printVMA();		  
-	    	   }			
 		    out.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}    	    	    	
+		} 
+		return arrayOfStrings;
 
     }
 
