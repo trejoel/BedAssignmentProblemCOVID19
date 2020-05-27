@@ -23,13 +23,15 @@ public class BedA {
 	private boolean available;
 	private int occupiedDays;
 	private int days2Release;
+	private PatientA xPatient;
  
     public BedA(int xid) {
-    	this.id=id;
-    	this.type=false;
-    	this.available=false;
-    	this.occupiedDays=0;
-    	this.days2Release=0;
+	    	this.id=xid;
+	    	this.type=false;
+	    	this.available=true;
+	    	this.occupiedDays=0;
+	    	this.days2Release=0;
+	    	xPatient=null;
     }
     
     
@@ -43,7 +45,7 @@ public class BedA {
     	return this.type;
     }
     
-    public boolean getAvailable() {
+    public boolean isAvailable() {
     	return this.available;
     }
     
@@ -53,6 +55,10 @@ public class BedA {
     
     public int getdays2Release() {
     	return this.days2Release;
+    }
+    
+    public PatientA getPatient() {
+    	return this.xPatient;
     }
     
     //setters
@@ -70,25 +76,33 @@ public class BedA {
     }
     
     public void setDays2Realease(int xDays2Release) {
-    	this.days2Release=xDays2Release;
+    		this.days2Release=xDays2Release;
     }
     
     public void increaseOccupiedDays() {
-    	this.occupiedDays=this.occupiedDays+1;
+    		this.occupiedDays=this.occupiedDays+1;
     }
     
     public void relaseBed() {
-    	this.days2Release=0;
-    	this.available=true;
+      	this.days2Release=0;
+    	    setAvailable(true);
     }
     
     public void receivePatient(PatientA xPatient) {
-    	int xOccupiedDays=xPatient.getLenghtOfStay();
-    	if (xOccupiedDays>0) {
-    		setAvailable(false);
-    	}
-    	this.setDays2Realease(xOccupiedDays);
-    	xPatient.assigned(true);
+    	  int xOccupiedDays=xPatient.getDay2release();
+    	  setAvailable(false);
+    	  if (xOccupiedDays>0) {
+      		this.xPatient=xPatient;
+    	  }
+      this.setDays2Realease(xOccupiedDays);//Days2Release of the bed
+    	  xPatient.assigned(true);
+    }
+    
+    public void decreaseDays2Release() {
+    	   days2Release--;
+    	   if (days2Release==0) {
+    		   this.setAvailable(true);
+    	   }
     }
     
     public void removePatient(PatientA xPatient) {

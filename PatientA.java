@@ -19,15 +19,17 @@ public class PatientA implements Serializable {
 	private int age;
 	private int dayOfArrival;
 	private int LOS;
-	private boolean type; // 0 critical, 1 urgent (non-critical)
+	private boolean type; // 0 non-ventilator, 1 ventilator (non-critical)
 	private boolean diabetes;  // 1 for positive
 	private boolean hyper; // 1 for positive
 	private boolean epoc; // 1 for positive
 	private boolean obesity; // 1 for positive
 	private boolean inmunesup; // 1 for positive
 	private boolean assigned;
+	private int days2release; // random value close to the LOS
 	private boolean dead; // by default false
-	private boolean hospital_discharge; //by default false
+	private int daysHospitalization;
+	private Utilities Ut;
 	
 	public PatientA(int pId, int xAge, int xdayOfArrival) {
 	  id=pId;
@@ -40,9 +42,11 @@ public class PatientA implements Serializable {
 	  inmunesup= false;
 	  assigned=false;
 	  dead=false;
-	  hospital_discharge=false;
 	  this.dayOfArrival=xdayOfArrival;
 	  this.LOS=15;
+	  this.days2release=15;
+	  daysHospitalization=0;
+	  Ut=new Utilities();
 	}
 	
 	public PatientA(int pId, int xAge, boolean xType, boolean xDiabetes, boolean xHyper, boolean xEpoc, boolean xObesity, boolean xInmunesup,int xdayOfArrival) {
@@ -56,9 +60,11 @@ public class PatientA implements Serializable {
 		  inmunesup= xInmunesup;
 		  assigned=false;
 		  dead=false;
-		  hospital_discharge=false;
 		  this.dayOfArrival=xdayOfArrival;
 		  this.LOS=15;
+		  this.days2release=15;
+		  Ut=new Utilities();
+		  daysHospitalization=0;
 		}
 	
 	//Getters
@@ -107,9 +113,20 @@ public class PatientA implements Serializable {
 		return this.LOS;
 	}
 	
+	public int getDay2release() {
+		return this.days2release;
+	}
+	
+	public boolean isDead() {
+		return this.dead;
+	}
 	
 	
 	//Setters
+	
+	public void setType(boolean xValue) {
+		this.type=xValue;
+	}
 	
 	public void setDiabetes(boolean xValue) {
 		this.diabetes=xValue;
@@ -138,6 +155,42 @@ public class PatientA implements Serializable {
 	
 	public void assigned(boolean isAssigned) {
 		this.assigned=isAssigned;
+	}
+	
+	public void setDay2Release(int xDay2Release) {
+		this.days2release=xDay2Release;
+	}
+	
+	public void setDead(boolean xValue) {
+		this.dead=xValue;
+	}
+	
+	//Auxiliar functions
+	
+	public void increaseDaysHospitalization() {
+		this.daysHospitalization++;
+	}
+	
+	public void decreaseDay2Release() {
+		if (this.dead) {
+			days2release=0;
+		}
+		if (days2release>0)
+		   days2release--;
+	}
+	
+	public void chance2Dead() {
+		//   public boolean isDead(int age, boolean isDiabetes, boolean isHyper, boolean isObese, boolean isEpoc, int daysHospitalization) {
+		this.dead=Ut.isDead(age,diabetes,hyper, obesity, epoc, this.daysHospitalization);
+	/*    if (this.isDead()) {
+	    	  this.setDay2Release(0);
+	    }
+	    else {
+	    	  if (this.getDay2release()>0);
+	    	     {
+	    	    	   this.setDay2Release(this.getDay2release()-1);
+	    	     }
+	    }*/
 	}
 
 
