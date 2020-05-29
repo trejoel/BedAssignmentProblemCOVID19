@@ -103,11 +103,12 @@ public class Testbed extends Thread {
        }
     	   return idPatient;
     }
-    
+ 
     public ArrayList<String> roundRobin(){
-    	  String text="";
-    	  File file=new File("roundRobin.txt");
+  	  String text="";
+  	  File file=new File("RoundRobin.txt");
 		PatientA xPatient;
+		myHospital.resetValues();
 		ArrayList<String> arrayOfStrings=new ArrayList<String>();
 		int startingBed=0;
 		try(  PrintWriter out = new PrintWriter( file)  ){
@@ -129,6 +130,35 @@ public class Testbed extends Thread {
 		} 
 		return arrayOfStrings;
 
+  }
+ 
+    
+    public ArrayList<String> ImprovedroundRobin(){
+    	  String text="";
+    	  File file=new File("ImprovedRoundRobin.txt");
+    	  myHospital.resetValues();
+		PatientA xPatient;
+		ArrayList<String> arrayOfStrings=new ArrayList<String>();
+		int startingBed=0;
+		try(  PrintWriter out = new PrintWriter( file)  ){
+			//out.println("[patientID, taskDemand, Start Time, Waiting_Time, Execution_Time, Accepted, WorkStationID]");
+			out.println("patientID, Ventilator, estimatedLenghOfStay, arrivalDay, days2Discharge, Accepted, BedID, Dead");
+		       System.out.println("number of patients:"+setPatients.size());
+			   for (int counter = 0; counter < setPatients.size(); counter++) {
+		       //for (int counter = 0; counter < 45; counter++) {
+		         xPatient=(PatientA)setPatients.get(counter);
+		    		text=myHospital.assignBed(xPatient, 2);
+		    		out.println(text);  
+		         //out.println(myHospital.assignBed(xPatient, 1));
+		         arrayOfStrings.add(myHospital.assignBed(xPatient, 2));
+		      }  
+			   System.out.println("Cierra el archivo");
+		    out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} 
+		return arrayOfStrings;
+
     }
     
 	
@@ -136,6 +166,7 @@ public class Testbed extends Thread {
 		Testbed Simulation=new Testbed(1);
 		Simulation.start();		
 		Simulation.roundRobin();
+		Simulation.ImprovedroundRobin();
 		System.out.println("Se fini!");				
 	}
 
