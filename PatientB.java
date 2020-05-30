@@ -13,7 +13,7 @@ import java.io.Serializable;
  * We use threads to simulate the concurrent enter of patients
  * */
 
-public class PatientA implements Serializable,Comparable<PatientA> {
+public class PatientB implements Serializable,Comparable<PatientB> {
 	
 	private int id;
 	private int age;
@@ -31,7 +31,7 @@ public class PatientA implements Serializable,Comparable<PatientA> {
 	private int daysHospitalization;
 	private Utilities Ut;
 	
-	public PatientA(int pId, int xAge, int xdayOfArrival) {
+	public PatientB(int pId, int xAge, int xdayOfArrival) {
 	  id=pId;
 	  age=xAge;
 	  type=false; //default
@@ -49,7 +49,7 @@ public class PatientA implements Serializable,Comparable<PatientA> {
 	  Ut=new Utilities();
 	}
 	
-	public PatientA(int pId, int xAge, boolean xType, boolean xDiabetes, boolean xHyper, boolean xEpoc, boolean xObesity, boolean xInmunesup,int xdayOfArrival) {
+	public PatientB(int pId, int xAge, boolean xType, boolean xDiabetes, boolean xHyper, boolean xEpoc, boolean xObesity, boolean xInmunesup,int xdayOfArrival) {
 		  id=pId;
 		  age=xAge;
 		  type=xType;
@@ -193,11 +193,11 @@ public class PatientA implements Serializable,Comparable<PatientA> {
 	
 	  @Override     
 
-	  public int compareTo(PatientA xPatient) {                 
+	  public int compareTo(PatientB xPatient) {                 
        if (this.getDayOfArrival()<xPatient.getDayOfArrival()) {
     	       return -1;
        }
-       else if (this.getDayOfArrival()==xPatient.getDayOfArrival() && this.getLOS()<xPatient.getLOS()) {
+       else if (this.getDayOfArrival()==xPatient.getDayOfArrival() && this.getLOS()>xPatient.getLOS()) {
     	      return -1;
        }
        else {

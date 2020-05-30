@@ -39,6 +39,17 @@ public class HospitalA {
 		this.dayOfSimulation=0;
 	}
 	
+	public void resetValues() {
+		curBedN=0; //First assigned roundRound with ventilator
+		curBedV=0; //First assigned roundRobin with no ventilator
+		//this.setPatients=new ArrayList<PatientA>();
+		this.setBedsV=new ArrayList<BedA>();
+		this.setBedsN=new ArrayList<BedA>();
+		this.generateBeds();
+		//this.traverseBeds();
+		this.dayOfSimulation=0;
+	}
+	
 	public int getDayOfSimulation() {
 	  return this.dayOfSimulation;
 	}
@@ -90,7 +101,7 @@ public class HospitalA {
 	    			 if (setBedsV.get(counter).getdays2Release()>0) {
 		    			 setBedsV.get(counter).decreaseDays2Release();
 		    			 if (setBedsV.get(counter).getdays2Release()==0) {
-		    				 System.out.println("Se libero la cama "+setBedsV.get(counter).getId());
+		    				 //System.out.println("Se libero la cama "+setBedsV.get(counter).getId());
 			    			 setBedsV.get(counter).relaseBed();
 		    			 }
 		    			 //System.out.println("Bed"+setBedsV.get(counter).getId()+" remaining days "+setBedsV.get(counter).getdays2Release());
@@ -108,7 +119,7 @@ public class HospitalA {
 	    			 if (setBedsN.get(counter).getdays2Release()>0) {
 		    			 setBedsN.get(counter).decreaseDays2Release();
 		    			 if (setBedsN.get(counter).getdays2Release()==0) {
-		    				 System.out.println("Se libero la cama "+setBedsN.get(counter).getId());
+		    				// System.out.println("Se libero la cama "+setBedsN.get(counter).getId());
 			    			 setBedsN.get(counter).relaseBed();
 		    			 }
 		    			 //Vamos a ver si lo decrementa
@@ -198,9 +209,9 @@ public class HospitalA {
 	       case 1: //text=roundRobin(xPatient);
 	       		   text=this.roundRobin(xPatient);
 	       		  break;
-	    /*   case 2:text=text+bestFit(job, this.curSMA,timeArrival, schedulable);
+	     case 2: text=this.ImprovedroundRobin(xPatient);
 	       		  break;
-	       case 3: text=text+firstComefirstServe(job, this.curSMA,timeArrival, schedulable);
+	      /*    case 3: text=text+firstComefirstServe(job, this.curSMA,timeArrival, schedulable);
 	       		  break;
            case 4: text=text+priority(job, this.curSMA,timeArrival, schedulable);
 	       		  break;	*/       
@@ -210,7 +221,85 @@ public class HospitalA {
 	    return text;
 	}
 	
+	
+	
+	
+	
+	
 	//curBedN current normal bed, curBedV current ventilator bed
+	
+	/**
+	 * We assign a patient to the current bed (if it is available), as soon as patient request for 
+	 * a bed. Without loss of generality a patient i migrating from a normal (ventilator) bed 
+	 * to a ventilator (normal) bed is a new patient j.  
+	 * 
+	 * 
+	 * **/
+
+	
+	//initial curBed 0 for ventilator bed, 300 for normal bed
+	//[patientID, type, estimatedLenghOfStay, arrivalDay, dischargeDay, Accepted, BedID, Death]
+	public String roundRobin(PatientA xPatient){
+        String text=xPatient.getId()+",";
+        text=text+xPatient.getType()+",";
+        text=text+xPatient.getLOS()+",";
+        text=text+xPatient.getDayOfArrival()+",";
+        text=text+xPatient.getDay2release()  +",";
+        int index=0;//0 is a temporary value. We updated with the curBedV and curBedN     
+        //System.out.println("Cama ventilador:"+curBedV+setBedsN.get(curBedV).isAvailable());
+       // System.out.println("Cama normal:"+curBedN+setBedsN.get(curBedN).isAvailable());
+        
+        if (xPatient.getType()) {//Require ventilator
+        	   index=this.curBedV;
+        	   if (this.curBedV<299) {
+        		   this.curBedV++;
+        	   }
+        	   else {
+        		   this.curBedV=0;
+        	   }
+        	   if (this.setBedsV.get(index).isAvailable()) {
+        		   text=text+"TRUE,";
+        		   text=text+setBedsV.get(index).getId()+",";
+        		  // System.out.println(xPatient.getId()+" "+xPatient.getType()+" Bed "+setBedsV.get(index).getId()+" Occupancy is:"+setBedsV.get(index).isAvailable());
+        		   setBedsV.get(index).receivePatient(xPatient);
+        	   }
+        	   else {
+        		   curBedV=0;
+        		   text=text+"FALSE,";
+        		   text=text+"NULL,";
+        		   System.out.println("Patient:"+xPatient.getId()+" Not assigned"); 
+        	   }
+        	   
+        }
+        else {
+        	   //index=getNextAvailableBed(false,curBedN);
+        	   index=this.curBedN;
+    		   //this.curBedN=index;
+        	   if (this.setBedsN.get(index).isAvailable()) {
+        		   text=text+"TRUE,";
+        		   text=text+setBedsN.get(index).getId()+",";
+        		  // System.out.println(xPatient.getId()+" "+xPatient.getType()+"Bed "+setBedsN.get(index).getId()+" Occupancy is:"+setBedsN.get(index).isAvailable());
+        		   setBedsN.get(index).receivePatient(xPatient);
+        		 // System.out.println(xPatient.getId()+" "+xPatient.getType()+" Bed "+setBedsN.get(index).getId()+" Occupancy is:"+setBedsN.get(index).isAvailable());
+        		  System.out.println("Patient:"+xPatient.getId()+" Not assigned");
+        	   }
+        	   else {
+        		   text=text+"FALSE,";
+        		   text=text+"NULL,";
+        	   }
+        } 
+ 	   
+ 	   if (this.curBedN<699) {
+ 		   this.curBedN++;
+ 	   }
+ 	   else {
+ 		   this.curBedN=0;
+ 	   }
+        text=text+xPatient.isDead()+"";
+        //System.out.println("Indice de par en par "+index);
+       // System.out.println(text);
+        return text;
+}
 	
 	/**
 	 * We assign a patient to the first available bed, as soon as patient request for 
@@ -222,7 +311,7 @@ public class HospitalA {
 	
 	//initial curBed 0 for ventilator bed, 300 for normal bed
 	//[patientID, type, estimatedLenghOfStay, arrivalDay, dischargeDay, Accepted, BedID, Death]
-	public String roundRobin(PatientA xPatient){
+	public String ImprovedroundRobin(PatientA xPatient){
         String text=xPatient.getId()+",";
         text=text+xPatient.getType()+",";
         text=text+xPatient.getLOS()+",";
@@ -238,7 +327,8 @@ public class HospitalA {
         	   if (index==-1) {
         		   curBedV=0;
         		   text=text+"FALSE,";
-        		   System.out.println("Patient:"+xPatient.getId()+" Not assigned");
+        		   text=text+"NULL,";
+        		  // System.out.println("Patient:"+xPatient.getId()+" Not assigned");
         	   }
         	   else {
         		   text=text+"TRUE,";
@@ -256,6 +346,7 @@ public class HospitalA {
         	   if (index==-1) {
         		   this.curBedN=0;
         		   text=text+"FALSE,";
+        		   text=text+"NULL,";
         		  // System.out.println("Patient:"+xPatient.getId()+" Not assigned");
         	   }
         	   else {
@@ -273,6 +364,19 @@ public class HospitalA {
         text=text+xPatient.isDead()+"";
         return text;
 }
+	
+
+	//Auxiliar functions to largest LOS
+	
+	/**
+	 * We assign a patient to the current bed (if it is available), as soon as patient request for 
+	 * a bed. Without loss of generality a patient i migrating from a normal (ventilator) bed 
+	 * to a ventilator (normal) bed is a new patient j.  
+	 * 
+	 * 
+	 * **/
+
+
 	
 	
 	/*public String fakeRoundRobin(PatientA xPatient) {

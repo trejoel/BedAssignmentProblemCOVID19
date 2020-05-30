@@ -14,13 +14,13 @@ public class Utilities {
      	Random random = new Random();  
      	int retVal=0;
     	  int numbOfPatient;
-    	  int randomInteger = random.nextInt(10);
+    	  int randomInteger = random.nextInt(5);
     	  boolean randomBoolean=random.nextBoolean();
     	  if (dayOfSimulation>=47 && dayOfSimulation<=53) {//Assuming day 50 is the peak of pandemia
-    		  numbOfPatient=100;
+    		  numbOfPatient=50;
     	  }
     	  else {
-    		  numbOfPatient=100-2*Math.abs(30-dayOfSimulation);
+    		  numbOfPatient=50-2*Math.abs(30-dayOfSimulation);
     		  if (numbOfPatient<0) {
     			  numbOfPatient=1;
     		  }
