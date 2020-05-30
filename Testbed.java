@@ -103,10 +103,39 @@ public class Testbed extends Thread {
        }
     	   return idPatient;
     }
-    
+ 
     public ArrayList<String> roundRobin(){
+  	  String text="";
+  	  File file=new File("RoundRobin.txt");
+		PatientA xPatient;
+		myHospital.resetValues();
+		ArrayList<String> arrayOfStrings=new ArrayList<String>();
+		int startingBed=0;
+		try(  PrintWriter out = new PrintWriter( file)  ){
+			//out.println("[patientID, taskDemand, Start Time, Waiting_Time, Execution_Time, Accepted, WorkStationID]");
+			out.println("patientID, Ventilator, estimatedLenghOfStay, arrivalDay, days2Discharge, Accepted, BedID, Dead");
+		       System.out.println("number of patients:"+setPatients.size());
+			   for (int counter = 0; counter < setPatients.size(); counter++) {
+		       //for (int counter = 0; counter < 45; counter++) {
+		        xPatient=(PatientA)setPatients.get(counter);
+		    		text=myHospital.assignBed(xPatient, 1);
+		    		out.println(text);  
+		         arrayOfStrings.add(text);
+		      }  
+			   System.out.println("Cierra el archivo");
+		    out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} 
+		return arrayOfStrings;
+
+  }
+ 
+    
+    public ArrayList<String> ImprovedroundRobin(){
     	  String text="";
-    	  File file=new File("roundRobin.txt");
+    	  File file=new File("ImprovedRoundRobin.txt");
+    	  myHospital.resetValues();
 		PatientA xPatient;
 		ArrayList<String> arrayOfStrings=new ArrayList<String>();
 		int startingBed=0;
@@ -117,10 +146,9 @@ public class Testbed extends Thread {
 			   for (int counter = 0; counter < setPatients.size(); counter++) {
 		       //for (int counter = 0; counter < 45; counter++) {
 		         xPatient=(PatientA)setPatients.get(counter);
-		    		text=myHospital.assignBed(xPatient, 1);
+		    		text=myHospital.assignBed(xPatient, 2);
 		    		out.println(text);  
-		         //out.println(myHospital.assignBed(xPatient, 1));
-		         arrayOfStrings.add(myHospital.assignBed(xPatient, 1));
+		        arrayOfStrings.add(text);
 		      }  
 			   System.out.println("Cierra el archivo");
 		    out.close();
@@ -131,11 +159,69 @@ public class Testbed extends Thread {
 
     }
     
+   	/**  	
+   	 * 
+   	 * public ArrayList<PatientA> sortSetPatients(ArrayList<PatientA> xPatients){
+    		ArrayList<PatientA> setSortedPatients=new ArrayList<PatientA>();
+    		int n=xPatients.size();
+    		PatientA keyPatient;
+    		for (int counter = 1; counter < n; counter++) {
+    			keyPatient=xPatients.get(counter);
+    			int i=counter-1;
+    			while (i>-1 && xPatient)
+    		}
+    		return setSortedPatients;
+    	}
+    	
+ 
+        int n = array.length;  
+        for (int j = 1; j < n; j++) {  
+            int key = array[j];  
+            int i = j-1;  
+            while ( (i > -1) && ( array [i] > key ) ) {  
+                array [i+1] = array [i];  
+                i--;  
+            }  
+            array[i+1] = key;  
+        }  
+    	 * */
+    
+
+    public ArrayList<String> ShorthestLOS(){
+  	  String text="";
+  	  File file=new File("ShorthestLOS.txt");
+  	  myHospital.resetValues();
+		PatientA xPatient;
+		ArrayList<String> arrayOfStrings=new ArrayList<String>();
+		ArrayList<PatientA> auxiliarSetPatients=this.setPatients;
+		ArrayList<PatientA> setSortedPatients=new sortedPatientList(auxiliarSetPatients).getSortedSetPatients();
+		int startingBed=0;
+		try(  PrintWriter out = new PrintWriter( file)  ){
+			//out.println("[patientID, taskDemand, Start Time, Waiting_Time, Execution_Time, Accepted, WorkStationID]");
+			out.println("patientID, Ventilator, estimatedLenghOfStay, arrivalDay, days2Discharge, Accepted, BedID, Dead");
+		       System.out.println("number of patients:"+setPatients.size());
+			    for (int counter = 0; counter < setPatients.size(); counter++) {
+		         xPatient=(PatientA)setSortedPatients.get(counter);
+		    		 text=myHospital.assignBed(xPatient, 1);
+		    		 out.println(text);  
+		         arrayOfStrings.add(text);
+		      }  
+			   System.out.println("Cierra el archivo");
+		    out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} 
+		return arrayOfStrings;
+
+  }
+    
 	
 	public static void main(String args[]){						
 		Testbed Simulation=new Testbed(1);
 		Simulation.start();		
 		Simulation.roundRobin();
+		Simulation.ImprovedroundRobin();
+		Simulation.ShorthestLOS();
 		System.out.println("Se fini!");				
 	}
 

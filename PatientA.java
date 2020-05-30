@@ -13,7 +13,7 @@ import java.io.Serializable;
  * We use threads to simulate the concurrent enter of patients
  * */
 
-public class PatientA implements Serializable {
+public class PatientA implements Serializable,Comparable<PatientA> {
 	
 	private int id;
 	private int age;
@@ -192,6 +192,30 @@ public class PatientA implements Serializable {
 	    	     }
 	    }*/
 	}
+	
+	
+	  @Override     
+
+	  public int compareTo(PatientA xPatient) {                 
+       if (this.getDayOfArrival()<xPatient.getDayOfArrival()) {
+    	       return -1;
+       }
+       else if (this.getDayOfArrival()==xPatient.getDayOfArrival() && this.getLOS()<xPatient.getLOS()) {
+    	      return -1;
+       }
+       else {
+    	      return 1; 
+       }    
+	  }       
+
+	  @Override     
+
+	  public String toString() {         
+
+	    return " Id: " + this.getId() + ", Type: " + this.getType() +" Day of Arriving "+this.getDayOfArrival() + ", Days to release:" + this.getDay2release();     
+
+	  } 
+
 
 
 }
